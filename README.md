@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/resources/shio-logo.png" width=320 />
+  <img src="src/assets/shio-logo.png" width=320 />
 </p>
 
 # SHIO - Simple Holistic Information Observer
