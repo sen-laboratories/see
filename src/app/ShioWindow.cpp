@@ -15,6 +15,7 @@
 #include <Path.h>
 
 #include "ShioWindow.h"
+#include "ShioDynamicView.h"
 
 ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
     BRect(BPoint(200.0, 128.0), BSize(240.0, 320.0)),
@@ -22,6 +23,8 @@ ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
     B_DOCUMENT_WINDOW,
     B_WILL_ACCEPT_FIRST_CLICK)
 {
+	SetLayout(new BGroupLayout(B_VERTICAL, 0));
+
     BMessage attrMsg;
     status_t result;
 
@@ -38,7 +41,12 @@ ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
         Close();
     }
 
-    BView *entityView = GetViewTemplateForType(mimeType.Type());
+    // todo: look up suitable template by mimeType
+    //BView *entityView = GetViewTemplateForType(mimeType.Type());
+
+    BView *entityView = new ShioDynamicView(&attrMsg);
+    AddChild(entityView);
+    Layout(false);
 }
 
 ShioWindow::~ShioWindow()
@@ -89,7 +97,7 @@ status_t ShioWindow::MapAttributesToMessage(const entry_ref *ref, BMessage* outA
 		return result;
 	}
 
-    outAttrMsg->PrintToStream();
+    outAttrMsg->PrintToStream();    // DEBUG
     return B_OK;
 }
 
