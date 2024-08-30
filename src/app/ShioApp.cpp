@@ -9,7 +9,6 @@
 #include <Alert.h>
 #include <Entry.h>
 #include <Errors.h>
-#include <Path.h>
 
 #include "ShioApp.h"
 #include "ShioWindow.h"
