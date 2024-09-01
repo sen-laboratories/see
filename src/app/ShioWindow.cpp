@@ -46,6 +46,12 @@ ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
         ShowUserError("MIME attrInfo lookup error", "Could not identify MIME type attributeInfo for filetype.", result);
         Close();
     }
+    BMimeType superType;
+    BMessage superTypeAttrInfo;
+    result = mimeType.GetSupertype(&superType);
+    superType.GetAttrInfo(&superTypeAttrInfo);
+
+    mimeAttrInfo.Append(superTypeAttrInfo);
     mimeAttrInfo.PrintToStream();
 
     // look up suitable template by mimeType
