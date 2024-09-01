@@ -9,10 +9,10 @@
 class ShioDynamicView : public BGroupView
 {
     public:
-                    ShioDynamicView(const BMessage *props);
+                    ShioDynamicView();
         virtual	   ~ShioDynamicView();
+        status_t    Populate(const BMessage *mimeAttrInfo, const BMessage* attrs);
 
     protected:
-        status_t    Populate(const BMessage *props);
-        BView*      CreateDataView(const char* name, type_code typeCode, const void* data);
+        BView*      CreateDataView(const char* name, type_code typeCode, bool editable, const void* data);
 };

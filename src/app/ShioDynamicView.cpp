@@ -16,7 +16,7 @@
  * generic dynamic view to use when no MIME specific view is available for the source file.
  * Builds a view containing fields and controls according to the attribute type of the source file attributes.
  */
-ShioDynamicView::ShioDynamicView(const BMessage *props)
+ShioDynamicView::ShioDynamicView()
 : BGroupView(B_VERTICAL, 0)
 {
 	SetFlags(Flags() | B_NAVIGABLE);
@@ -26,15 +26,13 @@ ShioDynamicView::ShioDynamicView(const BMessage *props)
 	// Set view color to standard background grey
 	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	SetFont(be_plain_font);
-
-    Populate(props);
 }
 
 ShioDynamicView::~ShioDynamicView()
 {
 }
 
-status_t ShioDynamicView::Populate(const BMessage *props)
+status_t ShioDynamicView::Populate(const BMessage *mimeAttrInfo, const BMessage *props)
 {
     const void* data;
     char*       name;
@@ -70,14 +68,15 @@ status_t ShioDynamicView::Populate(const BMessage *props)
             return B_ERROR;
         }
 
-        BView* propView = CreateDataView(name, type, data);
+        bool editable = props->FindBool("attr:editable");
+        BView* propView = CreateDataView(name, type, editable, data);
         GroupLayout()->AddView(propView);
     }
 
     return B_OK;
 }
 
-BView* ShioDynamicView::CreateDataView(const char* name, type_code typeCode, const void* data)
+BView* ShioDynamicView::CreateDataView(const char* name, type_code typeCode, bool editable, const void* data)
 {
     // container view
     BString containerLabel(name);
@@ -91,13 +90,9 @@ BView* ShioDynamicView::CreateDataView(const char* name, type_code typeCode, con
     // add data label
     BString label(name);
     label.Append("_label");
-/*
-    BStringView* labelView = new BStringView(label.String(), reinterpret_cast<const char*>(name));
-    labelView->ResizeToPreferred();
-    containerView->GroupLayout()->AddView(labelView);
-*/
+
     // add data field
-    BView* dataView = NULL;
+    BControl* dataView = NULL;
 
     switch(typeCode) {
         case B_BOOL_TYPE: {
@@ -153,9 +148,10 @@ BView* ShioDynamicView::CreateDataView(const char* name, type_code typeCode, con
             dataView = new BTextControl(name, error.String(), new BMessage());
             break;
     }
-    // todo: handle displayable and editable flags
-
+    // set editable based on MIME type attr info flag
+    dataView->SetEnabled(editable);
     dataView->ResizeToPreferred();
+
     containerView->GroupLayout()->AddView(dataView);
     containerView->ResizeToPreferred();
 

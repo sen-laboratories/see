@@ -24,36 +24,50 @@ ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
     B_WILL_ACCEPT_FIRST_CLICK)
 {
 	SetLayout(new BGroupLayout(B_VERTICAL, 0));
-
-    BMessage attrMsg;
     status_t result;
 
-    result = MapAttributesToMessage(ref, &attrMsg);
-    if (result != B_OK) {
-        Close();
-    }
-
     // get MIME type for view template lookup
+    char mimeTypeStr[B_MIME_TYPE_LENGTH];
     BMimeType mimeType;
-    result = BMimeType::GuessMimeType(ref, &mimeType);
+
+    result = GetMimeTypeForRef(ref, mimeTypeStr);
+    if (result == B_OK) {
+        mimeType.SetTo(mimeTypeStr);
+        result = mimeType.InitCheck();
+    }
     if (result != B_OK) {
-        ShowUserError("File identification error", "Could not identify MIME type of file.", result);
+        ShowUserError("MIME type lookup error", "Could not identify MIME type of file.", result);
+        Close();
+    }
+    // store MIME type attribute info to check for displayable or editable flags
+    BMessage mimeAttrInfo;
+    result = mimeType.GetAttrInfo(&mimeAttrInfo);
+    if (result != B_OK) {
+        ShowUserError("MIME attrInfo lookup error", "Could not identify MIME type attributeInfo for filetype.", result);
+        Close();
+    }
+    mimeAttrInfo.PrintToStream();
+
+    // look up suitable template by mimeType
+    // todo: generalize into ShioBaseView!
+    ShioDynamicView *entityView = (ShioDynamicView*) GetViewTemplateForType(mimeType.Type(), &mimeAttrInfo);
+
+    BMessage attrMsg;
+    result = MapAttributesToMessage(ref, &mimeAttrInfo, &attrMsg);
+    if (result != B_OK) {
         Close();
     }
 
-    // todo: look up suitable template by mimeType
-    //BView *entityView = GetViewTemplateForType(mimeType.Type());
-
-    BView *entityView = new ShioDynamicView(&attrMsg);
+    entityView->Populate(&mimeAttrInfo, &attrMsg);
     AddChild(entityView);
-    Layout(false);
+    //Layout(false);
 }
 
 ShioWindow::~ShioWindow()
 {
 }
 
-status_t ShioWindow::MapAttributesToMessage(const entry_ref *ref, BMessage* outAttrMsg)
+status_t ShioWindow::MapAttributesToMessage(const entry_ref *ref, const BMessage *mimeAttrInfo, BMessage* outAttrMsg)
 {
     status_t result;
 
@@ -71,14 +85,19 @@ status_t ShioWindow::MapAttributesToMessage(const entry_ref *ref, BMessage* outA
 	while ((result = node.GetNextAttrName(attrName)) == B_OK) {
 		BString relationAttr(attrName);
         // omit known internal / system attributes
-		if (relationAttr.StartsWith("BEOS:") || relationAttr.StartsWith("be:") || relationAttr.StartsWith("_trk/")) {
+		/*if (relationAttr.StartsWith("BEOS:") || relationAttr.StartsWith("be:") || relationAttr.StartsWith("_trk/")) {
             continue;
-        }
+        }*/
         result = node.GetAttrInfo(attrName, &attrInfo);
 	    if (result != B_OK) {
 		    ShowUserError("Error opening file", "Encountered an error reading attribute info from file!", result);
 		    return result;
         }
+        // omit items that should not be displayed
+        if (! mimeAttrInfo->FindBool("attr:viewable", attrCount)) {
+            continue;   // skip attribute as it should not be displayed
+        }
+
 		const void *data[attrInfo.size];
 		ssize_t bytesRead = node.ReadAttr(attrName, attrInfo.type, 0, data, attrInfo.size);
 
@@ -101,9 +120,27 @@ status_t ShioWindow::MapAttributesToMessage(const entry_ref *ref, BMessage* outA
     return B_OK;
 }
 
-BView* ShioWindow::GetViewTemplateForType(const char* mimeType) { return NULL; }
+// todo: look up suitable view based on MIME type
+BView* ShioWindow::GetViewTemplateForType(const char* mimeType, const BMessage* attrMsg) {
+    return new ShioDynamicView();
+}
 
-status_t ShioWindow::SetupView(const BView* entityView, const BMessage* attrMsg) { return B_OK; }
+status_t ShioWindow::GetMimeTypeForRef(const entry_ref* ref, char* mimeType) {
+    BNode sourceNode(ref);
+    status_t result;
+    if ((result = sourceNode.InitCheck()) != B_OK) {
+        return result;
+    }
+    BNodeInfo sourceInfo(&sourceNode);
+    if ((result = sourceInfo.InitCheck()) != B_OK) {
+        return result;
+    }
+    if ((result = sourceInfo.GetType(mimeType)) != B_OK) {
+        return result;
+    }
+
+    return B_OK;
+}
 
 void ShioWindow::ShowUserError(const char *title, const char* message, status_t errorCode)
 {

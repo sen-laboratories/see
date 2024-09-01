@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include <Mime.h>
 #include <Window.h>
 
 class ShioWindow : public BWindow
@@ -13,8 +14,8 @@ class ShioWindow : public BWindow
         virtual			    ~ShioWindow();
 
     protected:
-        status_t            MapAttributesToMessage(const entry_ref *ref, BMessage* outAttrMsg);
-        BView*              GetViewTemplateForType(const char* mimeType);
-        status_t            SetupView(const BView* entityView, const BMessage* attrMsg);
+        status_t            MapAttributesToMessage(const entry_ref *ref, const BMessage *mimeAttrInfo, BMessage* outAttrMsg);
+        BView*              GetViewTemplateForType(const char* mimeType, const BMessage *mimeAttrInfo);
         void                ShowUserError(const char* title, const char* message, status_t errorCode);
+        status_t            GetMimeTypeForRef(const entry_ref* ref, char* mimeType);
 };
