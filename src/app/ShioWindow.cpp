@@ -15,10 +15,12 @@
 #include <Path.h>
 
 #include "ShioWindow.h"
-#include "ShioDynamicView.h"
+#include "ShioView.h"
+#include "ShioGenericFormView.h"
+#include "ShioTemplateView.h"
 
 ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
-    BRect(BPoint(200.0, 128.0), BSize(240.0, 320.0)),
+    BRect(BPoint(320.0, 128.0), BSize(480.0, 576.0)),
     "Shio Entity Viewer",
     B_DOCUMENT_WINDOW,
     B_WILL_ACCEPT_FIRST_CLICK)
@@ -52,21 +54,19 @@ ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
     superType.GetAttrInfo(&superTypeAttrInfo);
 
     mimeAttrInfo.Append(superTypeAttrInfo);
-    mimeAttrInfo.PrintToStream();
 
     // look up suitable template by mimeType
-    // todo: generalize into ShioBaseView!
-    ShioDynamicView *entityView = (ShioDynamicView*) GetViewTemplateForType(mimeType.Type(), &mimeAttrInfo);
+    ShioView *entityView = GetViewTemplateForType(mimeType.Type());
 
     BMessage attrMsg;
     result = MapAttributesToMessage(ref, &mimeAttrInfo, &attrMsg);
     if (result != B_OK) {
+        ShowUserError("Error opening view", "Could not map data for display.", result);
         Close();
     }
 
     entityView->Populate(&mimeAttrInfo, &attrMsg);
-    AddChild(entityView);
-    //Layout(false);
+    AddChild(entityView->GetView());
 }
 
 ShioWindow::~ShioWindow()
@@ -90,10 +90,11 @@ status_t ShioWindow::MapAttributesToMessage(const entry_ref *ref, const BMessage
 
 	while ((result = node.GetNextAttrName(attrName)) == B_OK) {
 		BString relationAttr(attrName);
-        // omit known internal / system attributes
-		/*if (relationAttr.StartsWith("BEOS:") || relationAttr.StartsWith("be:") || relationAttr.StartsWith("_trk/")) {
+        // always omit known internal / system attributes
+        // todo: maintain a BStringList and check with ContainsString() here, e.g. MediaThumbnail etc.
+		if (relationAttr.StartsWith("BEOS:") || relationAttr.StartsWith("be:") || relationAttr.StartsWith("_trk/")) {
             continue;
-        }*/
+        }
         result = node.GetAttrInfo(attrName, &attrInfo);
 	    if (result != B_OK) {
 		    ShowUserError("Error opening file", "Encountered an error reading attribute info from file!", result);
@@ -126,9 +127,22 @@ status_t ShioWindow::MapAttributesToMessage(const entry_ref *ref, const BMessage
     return B_OK;
 }
 
-// todo: look up suitable view based on MIME type
-BView* ShioWindow::GetViewTemplateForType(const char* mimeType, const BMessage* attrMsg) {
-    return new ShioDynamicView();
+// look up suitable view based on MIME type, fall back to generic form view if not available.
+ShioView* ShioWindow::GetViewTemplateForType(const char* mimeType) {
+    ShioView* view = new ShioTemplateView(mimeType);
+
+    BString message;
+    if (view->IsValid()) {
+        message.Append("Open template view for type ");
+    } else {
+        message.Append("Open generic view for type ");
+        delete view;
+        view = new ShioGenericFormView();
+    }
+    message.Append(mimeType);
+    ShowUserError("Debug", message.String(), B_OK);
+
+    return view;
 }
 
 status_t ShioWindow::GetMimeTypeForRef(const entry_ref* ref, char* mimeType) {

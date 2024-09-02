@@ -6,13 +6,21 @@
 
 #include <GroupView.h>
 
-class ShioDynamicView : public BGroupView
+#include "ShioView.h"
+
+class ShioGenericFormView : public ShioView
 {
     public:
-                    ShioDynamicView();
-        virtual	   ~ShioDynamicView();
+                    ShioGenericFormView();
+        virtual	   ~ShioGenericFormView();
+        // from ShioView
+        BView*      GetView();
+        bool        IsValid();
         status_t    Populate(const BMessage *mimeAttrInfo, const BMessage* attrs);
 
     protected:
         BView*      CreateDataView(const char* name, type_code typeCode, bool editable, const void* data);
+
+    private:
+        BGroupView* fView;
 };

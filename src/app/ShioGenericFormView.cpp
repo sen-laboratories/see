@@ -8,31 +8,41 @@
 #include <ControlLook.h>
 #include <Entry.h>
 #include <Errors.h>
-#include "ShioDynamicView.h"
-#include <StringView.h>
+#include <GroupView.h>
 #include <TextControl.h>
+
+#include "ShioGenericFormView.h"
 
 /*
  * generic dynamic view to use when no MIME specific view is available for the source file.
  * Builds a view containing fields and controls according to the attribute type of the source file attributes.
  */
-ShioDynamicView::ShioDynamicView()
-: BGroupView(B_VERTICAL, 0)
+ShioGenericFormView::ShioGenericFormView() : ShioView()
 {
-	SetFlags(Flags() | B_NAVIGABLE);
-	SetName("Shio Dynamic View");
-    GroupLayout()->SetInsets(be_control_look->DefaultLabelSpacing());
+    fView = new BGroupView(B_VERTICAL, 0);
+	fView->SetFlags(fView->Flags() | B_NAVIGABLE);
+	fView->SetName("Shio Dynamic View");
+    fView->GroupLayout()->SetInsets(be_control_look->DefaultLabelSpacing());
 
 	// Set view color to standard background grey
-	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
-	SetFont(be_plain_font);
+	fView->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
+	fView->SetFont(be_plain_font);
 }
 
-ShioDynamicView::~ShioDynamicView()
+ShioGenericFormView::~ShioGenericFormView()
 {
 }
 
-status_t ShioDynamicView::Populate(const BMessage *mimeAttrInfo, const BMessage *props)
+BView* ShioGenericFormView::GetView()
+{
+    return fView;
+}
+
+bool ShioGenericFormView::IsValid() {
+    return fView != NULL;
+}
+
+status_t ShioGenericFormView::Populate(const BMessage *mimeAttrInfo, const BMessage *props)
 {
     const void* data;
     char*       name;
@@ -62,21 +72,24 @@ status_t ShioDynamicView::Populate(const BMessage *mimeAttrInfo, const BMessage 
         if (result != B_OK) {
             BString error("Could not read data ");
             error.Append(name);
+
             BAlert alert("Error setting up view", error.String(), "OK");
             alert.SetFlags(alert.Flags() | B_STOP_ALERT | B_CLOSE_ON_ESCAPE);
             alert.Go();
+
             return B_ERROR;
         }
 
         bool editable = props->FindBool("attr:editable");
         BView* propView = CreateDataView(name, type, editable, data);
-        GroupLayout()->AddView(propView);
+
+        fView->GroupLayout()->AddView(propView);
     }
 
     return B_OK;
 }
 
-BView* ShioDynamicView::CreateDataView(const char* name, type_code typeCode, bool editable, const void* data)
+BView* ShioGenericFormView::CreateDataView(const char* name, type_code typeCode, bool editable, const void* data)
 {
     // container view
     BString containerLabel(name);
@@ -85,7 +98,7 @@ BView* ShioDynamicView::CreateDataView(const char* name, type_code typeCode, boo
     BGroupView* containerView = new BGroupView(B_HORIZONTAL, 240.0);    // todo: calculate from all fields
 	containerView->SetName(containerLabel.String());
 	// Set view color to standard background grey
-	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
+	fView->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 
     // add data label
     BString label(name);
