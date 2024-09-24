@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="src/assets/shio-logo.png" width=320 />
+  <img src="src/assets/shoji-logo.png" width=320 />
 </p>
 
-# SHIO - Simple Holistic Information Observer
+# shoji
 
-universal metadata attribute-driven entity viewer for Haiku
+a universal customizable template form based metadata and entity viewer for Haiku.
