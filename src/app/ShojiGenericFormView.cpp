@@ -11,17 +11,17 @@
 #include <GroupView.h>
 #include <TextControl.h>
 
-#include "ShioGenericFormView.h"
+#include "ShojiGenericFormView.h"
 
 /*
  * generic dynamic view to use when no MIME specific view is available for the source file.
  * Builds a view containing fields and controls according to the attribute type of the source file attributes.
  */
-ShioGenericFormView::ShioGenericFormView() : ShioView()
+ShojiGenericFormView::ShojiGenericFormView() : ShojiView()
 {
     fView = new BGroupView(B_VERTICAL, 0);
 	fView->SetFlags(fView->Flags() | B_NAVIGABLE);
-	fView->SetName("Shio Dynamic View");
+	fView->SetName("Shoji Dynamic View");
     fView->GroupLayout()->SetInsets(be_control_look->DefaultLabelSpacing());
 
 	// Set view color to standard background grey
@@ -29,20 +29,20 @@ ShioGenericFormView::ShioGenericFormView() : ShioView()
 	fView->SetFont(be_plain_font);
 }
 
-ShioGenericFormView::~ShioGenericFormView()
+ShojiGenericFormView::~ShojiGenericFormView()
 {
 }
 
-BView* ShioGenericFormView::GetView()
+BView* ShojiGenericFormView::GetView()
 {
     return fView;
 }
 
-bool ShioGenericFormView::IsValid() {
+bool ShojiGenericFormView::IsValid() {
     return fView != NULL;
 }
 
-status_t ShioGenericFormView::Populate(const BMessage *mimeAttrInfo, const BMessage *props)
+status_t ShojiGenericFormView::Populate(const BMessage *mimeAttrInfo, const BMessage *props)
 {
     const void* data;
     char*       name;
@@ -89,7 +89,7 @@ status_t ShioGenericFormView::Populate(const BMessage *mimeAttrInfo, const BMess
     return B_OK;
 }
 
-BView* ShioGenericFormView::CreateDataView(const char* name, type_code typeCode, bool editable, const void* data)
+BView* ShojiGenericFormView::CreateDataView(const char* name, type_code typeCode, bool editable, const void* data)
 {
     // container view
     BString containerLabel(name);

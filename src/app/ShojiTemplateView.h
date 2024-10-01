@@ -5,16 +5,16 @@
 #pragma once
 
 #include <View.h>
-#include "ShioView.h"
+#include "ShojiView.h"
 
-#define SHIO_TEMPLATE_VIEW_TYPE "application/x.vnd-sen-labs.shio.templateView"
+#define Shoji_TEMPLATE_VIEW_TYPE "application/x.vnd-sen-labs.Shoji.templateView"
 
-class ShioTemplateView : public ShioView
+class ShojiTemplateView : public ShojiView
 {
     public:
-                    ShioTemplateView(const char* mimeType);
-        virtual	   ~ShioTemplateView();
-        // from ShioView
+                    ShojiTemplateView(const char* mimeType);
+        virtual	   ~ShojiTemplateView();
+        // from ShojiView
         BView*      GetView();
         bool        IsValid();
         status_t    Populate(const BMessage *mimeAttrInfo, const BMessage* attrs);

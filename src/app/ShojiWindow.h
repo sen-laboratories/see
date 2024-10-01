@@ -6,17 +6,17 @@
 
 #include <Mime.h>
 #include <Window.h>
-#include "ShioView.h"
+#include "ShojiView.h"
 
-class ShioWindow : public BWindow
+class ShojiWindow : public BWindow
 {
     public:
-                            ShioWindow(entry_ref *ref);
-        virtual			    ~ShioWindow();
+                            ShojiWindow(entry_ref *ref);
+        virtual			    ~ShojiWindow();
 
     protected:
         status_t            MapAttributesToMessage(const entry_ref *ref, const BMessage *mimeAttrInfo, BMessage* outAttrMsg);
-        ShioView*           GetViewTemplateForType(const char* mimeType);
+        ShojiView*           GetViewTemplateForType(const char* mimeType);
         void                ShowUserError(const char* title, const char* message, status_t errorCode);
         status_t            GetMimeTypeForRef(const entry_ref* ref, char* mimeType);
 };

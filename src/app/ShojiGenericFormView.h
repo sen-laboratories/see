@@ -6,14 +6,14 @@
 
 #include <GroupView.h>
 
-#include "ShioView.h"
+#include "ShojiView.h"
 
-class ShioGenericFormView : public ShioView
+class ShojiGenericFormView : public ShojiView
 {
     public:
-                    ShioGenericFormView();
-        virtual	   ~ShioGenericFormView();
-        // from ShioView
+                    ShojiGenericFormView();
+        virtual	   ~ShojiGenericFormView();
+        // from ShojiView
         BView*      GetView();
         bool        IsValid();
         status_t    Populate(const BMessage *mimeAttrInfo, const BMessage* attrs);

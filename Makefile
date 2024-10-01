@@ -5,7 +5,7 @@
 ## architecture of Haiku.
 
 # The name of the binary.
-NAME = shio
+NAME = shoji
 TARGET_DIR = .
 
 # The type of binary, must be one of:
@@ -17,7 +17,7 @@ TYPE = APP
 
 # 	If you plan to use localization, specify the application's MIME signature.
 
-APP_MIME_SIG = application/x-vnd.sen-labs.shio
+APP_MIME_SIG = application/x-vnd.sen-labs.shoji
 
 #	The following lines tell Pe and Eddie where the SRCS, RDEFS, and RSRCS are
 #	so that Pe and Eddie can fill them in for you.
@@ -30,7 +30,7 @@ APP_MIME_SIG = application/x-vnd.sen-labs.shio
 #	means this Makefile will not work correctly if two source files with the
 #	same name (source.c or source.cpp) are included from different directories.
 #	Also note that spaces in folder names do not work well with this Makefile.
-SRCS =  src/app/ShioApp.cpp src/app/ShioWindow.cpp src/app/ShioGenericFormView.cpp src/app/ShioTemplateView.cpp
+SRCS =  src/app/ShojiApp.cpp src/app/ShojiWindow.cpp src/app/ShojiGenericFormView.cpp src/app/ShojiTemplateView.cpp
 
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.

@@ -1,10 +1,10 @@
-resource app_signature "application/x-vnd.sen-labs.shio";
+resource app_signature "application/x-vnd.sen-labs.shoji";
 
 resource app_flags B_MULTIPLE_LAUNCH;
 
 resource app_version {
 	major  = 0,
-	middle = 1,
+	middle = 2,
 	minor  = 0,
 
 	/* 0 = development	1 = alpha			2 = beta
@@ -13,6 +13,6 @@ resource app_version {
 
 	internal = 0,
 
-	short_info = "SHIO Universal Entity Viewer",
-	long_info  = "Simple Holistic Information Observer"
+	short_info = "Shoji Entity Forms",
+	long_info  = "a flexible template based file viewer"
 };

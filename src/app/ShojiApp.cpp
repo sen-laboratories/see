@@ -10,20 +10,20 @@
 #include <Entry.h>
 #include <Errors.h>
 
-#include "ShioApp.h"
-#include "ShioWindow.h"
+#include "ShojiApp.h"
+#include "ShojiWindow.h"
 
-const char* kApplicationSignature = "application/x-vnd.sen-labs.shio";
+const char* kApplicationSignature = "application/x-vnd.sen-labs.Shoji";
 
-ShioApp::ShioApp() : BApplication(kApplicationSignature)
+ShojiApp::ShojiApp() : BApplication(kApplicationSignature)
 {
 }
 
-ShioApp::~ShioApp()
+ShojiApp::~ShojiApp()
 {
 }
 
-void ShioApp::ArgvReceived(int32 argc, char **argv)
+void ShojiApp::ArgvReceived(int32 argc, char **argv)
 {
     if (argc < 1) {
         // todo: show empty splash screen and allow drag&drop
@@ -40,7 +40,7 @@ void ShioApp::ArgvReceived(int32 argc, char **argv)
     RefsReceived(&refsMsg);
 }
 
-void ShioApp::RefsReceived(BMessage *message)
+void ShojiApp::RefsReceived(BMessage *message)
 {
     entry_ref ref;
 
@@ -53,12 +53,12 @@ void ShioApp::RefsReceived(BMessage *message)
         return;
     }
 
-    (new ShioWindow(new entry_ref(ref.device, ref.directory, ref.name)))->Show();
+    (new ShojiWindow(new entry_ref(ref.device, ref.directory, ref.name)))->Show();
 }
 
 int main()
 {
-	ShioApp* app = new ShioApp();
+	ShojiApp* app = new ShojiApp();
     if (app->InitCheck() != B_OK) {
         return 1;
     }

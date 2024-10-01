@@ -6,7 +6,7 @@
 
 #include <View.h>
 
-class ShioView
+class ShojiView
 {
     public:
         virtual BView*      GetView() { return NULL; }

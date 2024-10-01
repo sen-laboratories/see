@@ -6,11 +6,11 @@
 
 #include <Application.h>
 
-class ShioApp : public BApplication
+class ShojiApp : public BApplication
 {
     public:
-                            ShioApp();
-        virtual			    ~ShioApp();
+                            ShojiApp();
+        virtual			    ~ShojiApp();
         virtual void        RefsReceived(BMessage* message);
         virtual void        ArgvReceived(int32 argc, char **argv);
 };

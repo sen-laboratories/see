@@ -14,14 +14,14 @@
 #include <NodeInfo.h>
 #include <Path.h>
 
-#include "ShioWindow.h"
-#include "ShioView.h"
-#include "ShioGenericFormView.h"
-#include "ShioTemplateView.h"
+#include "ShojiWindow.h"
+#include "ShojiView.h"
+#include "ShojiGenericFormView.h"
+#include "ShojiTemplateView.h"
 
-ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
+ShojiWindow::ShojiWindow(entry_ref* ref) : BWindow(
     BRect(BPoint(320.0, 128.0), BSize(480.0, 576.0)),
-    "Shio Entity Viewer",
+    "Shoji Entity Viewer",
     B_DOCUMENT_WINDOW,
     B_WILL_ACCEPT_FIRST_CLICK)
 {
@@ -56,7 +56,7 @@ ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
     mimeAttrInfo.Append(superTypeAttrInfo);
 
     // look up suitable template by mimeType
-    ShioView *entityView = GetViewTemplateForType(mimeType.Type());
+    ShojiView *entityView = GetViewTemplateForType(mimeType.Type());
 
     BMessage attrMsg;
     result = MapAttributesToMessage(ref, &mimeAttrInfo, &attrMsg);
@@ -69,11 +69,11 @@ ShioWindow::ShioWindow(entry_ref* ref) : BWindow(
     AddChild(entityView->GetView());
 }
 
-ShioWindow::~ShioWindow()
+ShojiWindow::~ShojiWindow()
 {
 }
 
-status_t ShioWindow::MapAttributesToMessage(const entry_ref *ref, const BMessage *mimeAttrInfo, BMessage* outAttrMsg)
+status_t ShojiWindow::MapAttributesToMessage(const entry_ref *ref, const BMessage *mimeAttrInfo, BMessage* outAttrMsg)
 {
     status_t result;
 
@@ -128,8 +128,8 @@ status_t ShioWindow::MapAttributesToMessage(const entry_ref *ref, const BMessage
 }
 
 // look up suitable view based on MIME type, fall back to generic form view if not available.
-ShioView* ShioWindow::GetViewTemplateForType(const char* mimeType) {
-    ShioView* view = new ShioTemplateView(mimeType);
+ShojiView* ShojiWindow::GetViewTemplateForType(const char* mimeType) {
+    ShojiView* view = new ShojiTemplateView(mimeType);
 
     BString message;
     if (view->IsValid()) {
@@ -137,7 +137,7 @@ ShioView* ShioWindow::GetViewTemplateForType(const char* mimeType) {
     } else {
         message.Append("Open generic view for type ");
         delete view;
-        view = new ShioGenericFormView();
+        view = new ShojiGenericFormView();
     }
     message.Append(mimeType);
     ShowUserError("Debug", message.String(), B_OK);
@@ -145,7 +145,7 @@ ShioView* ShioWindow::GetViewTemplateForType(const char* mimeType) {
     return view;
 }
 
-status_t ShioWindow::GetMimeTypeForRef(const entry_ref* ref, char* mimeType) {
+status_t ShojiWindow::GetMimeTypeForRef(const entry_ref* ref, char* mimeType) {
     BNode sourceNode(ref);
     status_t result;
     if ((result = sourceNode.InitCheck()) != B_OK) {
@@ -162,7 +162,7 @@ status_t ShioWindow::GetMimeTypeForRef(const entry_ref* ref, char* mimeType) {
     return B_OK;
 }
 
-void ShioWindow::ShowUserError(const char *title, const char* message, status_t errorCode)
+void ShojiWindow::ShowUserError(const char *title, const char* message, status_t errorCode)
 {
     BString msg(message);
     msg.Append("\nDetail: ").Append(strerror(errorCode));

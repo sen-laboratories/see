@@ -11,13 +11,13 @@
 #include <Path.h>
 #include <TextControl.h>
 
-#include "ShioTemplateView.h"
+#include "ShojiTemplateView.h"
 
 /*
  * generic dynamic view to use when no MIME specific view is available for the source file.
  * Builds a view containing fields and controls according to the attribute type of the source file attributes.
  */
-ShioTemplateView::ShioTemplateView(const char* mimeType) : ShioView()
+ShojiTemplateView::ShojiTemplateView(const char* mimeType) : ShojiView()
 {
     status_t result = LookupView(mimeType, fTemplateView);
     if (result != B_OK) {
@@ -42,20 +42,20 @@ ShioTemplateView::ShioTemplateView(const char* mimeType) : ShioView()
     }
 }
 
-ShioTemplateView::~ShioTemplateView()
+ShojiTemplateView::~ShojiTemplateView()
 {
 }
 
-BView* ShioTemplateView::GetView()
+BView* ShojiTemplateView::GetView()
 {
     return fTemplateView;
 }
 
-bool ShioTemplateView::IsValid() {
+bool ShojiTemplateView::IsValid() {
     return fTemplateView != NULL;
 }
 
-status_t ShioTemplateView::LookupView(const char* mimeType, BView* view) {
+status_t ShojiTemplateView::LookupView(const char* mimeType, BView* view) {
     BPath path;
     status_t status;
 
@@ -64,7 +64,7 @@ status_t ShioTemplateView::LookupView(const char* mimeType, BView* view) {
 		path.SetTo("./templates");
     } else
     {
-        path.Append("shio/templates");
+        path.Append("Shoji/templates");
     }
 	BDirectory templatesDir(path.Path());
 	if (! templatesDir.Contains(path.Path())) {
@@ -94,7 +94,7 @@ status_t ShioTemplateView::LookupView(const char* mimeType, BView* view) {
     return B_OK;
 }
 
-status_t ShioTemplateView::Populate(const BMessage *mimeAttrInfo, const BMessage *props)
+status_t ShojiTemplateView::Populate(const BMessage *mimeAttrInfo, const BMessage *props)
 {
     const void* data;
     char*       name;
@@ -143,7 +143,7 @@ status_t ShioTemplateView::Populate(const BMessage *mimeAttrInfo, const BMessage
     return B_OK;
 }
 
-void ShioTemplateView::PopulateControl(BView *view, const void** data) {
+void ShojiTemplateView::PopulateControl(BView *view, const void** data) {
     if (BTextControl* tc = dynamic_cast<BTextControl*>(view)) {
         tc->SetText(reinterpret_cast<const char*>(data));
     }
