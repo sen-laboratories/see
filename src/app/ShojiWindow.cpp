@@ -9,6 +9,7 @@
 #include <Alert.h>
 #include <Entry.h>
 #include <Errors.h>
+#include <cstdio>
 #include <fs_attr.h>
 #include <MimeType.h>
 #include <NodeInfo.h>
@@ -136,6 +137,7 @@ ShojiView* ShojiWindow::GetViewTemplateForType(const char* mimeType) {
 
     BString message;
     if (status == B_ENTRY_NOT_FOUND) {
+        printf("no template found for type %s, falling back to generic form view.\n", mimeType);
         delete view;
         view = new ShojiGenericFormView();
         status = view->Initialize();

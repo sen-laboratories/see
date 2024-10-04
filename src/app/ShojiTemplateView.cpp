@@ -43,12 +43,12 @@ status_t ShojiTemplateView::LookupView(const char* mimeType, BView* view) {
 
 	if (find_directory(B_USER_SETTINGS_DIRECTORY, &path) != B_OK)
     {
+        printf("could not access user settings dir, falling back to current dir.\n");
         templatesDir.SetTo(".");
         if (! templatesDir.Contains("templates", B_DIRECTORY_NODE)) {
             return B_ENTRY_NOT_FOUND;
         }
-        templatesDir.SetTo("templates");
-        printf("could not access user settings dir, falling back to current dir.\n");
+        path.SetTo("./templates");
     } else {
         path.Append(SHOJI_TEMPLATE_PATH);
         status = create_directory(path.Path(), B_READ_WRITE);
@@ -56,38 +56,45 @@ status_t ShojiTemplateView::LookupView(const char* mimeType, BView* view) {
             printf("failed to create settings dir %s: %s\n", path.Path(), strerror(status));
             return status;
         }
-        templatesDir.SetTo(path.Path());
-        printf("Created settings dir.\n");
     }
+    templatesDir.SetTo(path.Path());
     if ((status = templatesDir.InitCheck()) != B_OK) {
+        printf("failed to access templates dir at path %s.\n", path.Path());
         return status;
     }
 
     // now search for template corresponding to the mimetype
     if (! templatesDir.Contains(mimeType, B_DIRECTORY_NODE)) {
-        printf("no view template found for MIME type %s.\n", mimeType);
+        printf("no view template defined for MIME type %s.\n", mimeType);
         return B_ENTRY_NOT_FOUND;
     }
-    status = templatesDir.SetTo(mimeType);
+    path.Append(mimeType);
+    status = templatesDir.SetTo(path.Path());
 	if (status != B_OK) {
+        printf("failed to lookup template for MIME type %s: %s\n", mimeType, strerror(status));
         return status;
     }
-    // view template is stored in mime type dir as archived view
+    // view template is stored in MIME type dir as archived view
     // this directory will contain other assets later, like DataProviders.
-    if (templatesDir.Contains(SHOJI_TEMPLATE_NAME)) {
+    if (! templatesDir.Contains(SHOJI_TEMPLATE_NAME)) {
+        printf("no view template file found for the MIME type %s.\n", mimeType);
         return B_ENTRY_NOT_FOUND;
     }
     BFile templateFile(&templatesDir, SHOJI_TEMPLATE_NAME, B_READ_ONLY);
     if ((status = templateFile.InitCheck()) != B_OK) {
+        printf("error reading template file for MIME type %s: %s\n", mimeType, strerror(status));
         return status;
     }
     BMessage archivedViewMsg;
     status = archivedViewMsg.Unflatten(&templateFile);
     if (status != B_OK) {
+        printf("error unwrapping template view for MIME type %s: %s\n", mimeType, strerror(status));
         return status;
     }
 
     fView = new BView(&archivedViewMsg);
+    printf("template view unwrapped with status %s, view is %s\n", strerror(status), (fView == NULL ? "NULL" : "SET"));
+
     return (fView != NULL ? B_OK : B_ERROR);
 }
 
@@ -142,6 +149,6 @@ status_t ShojiTemplateView::Populate(const BMessage *mimeAttrInfo, const BMessag
 
 void ShojiTemplateView::PopulateControl(BView *view, const void** data) {
     if (BTextControl* tc = dynamic_cast<BTextControl*>(view)) {
-        tc->SetText(reinterpret_cast<const char*>(data));
+        tc->SetText(reinterpret_cast<const char*>(*data));
     }
 }
