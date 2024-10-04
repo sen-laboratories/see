@@ -57,6 +57,9 @@ ShojiWindow::ShojiWindow(entry_ref* ref) : BWindow(
 
     // look up suitable template by mimeType
     ShojiView *entityView = GetViewTemplateForType(mimeType.Type());
+    if (entityView == NULL) {
+        Close();
+    }
 
     BMessage attrMsg;
     result = MapAttributesToMessage(ref, &mimeAttrInfo, &attrMsg);
@@ -118,30 +121,33 @@ status_t ShojiWindow::MapAttributesToMessage(const entry_ref *ref, const BMessag
 		attrCount++;
 	} // while
 
-	if (result != B_ENTRY_NOT_FOUND) {
+	if (result != B_OK && result != B_ENTRY_NOT_FOUND) {
 		ShowUserError("Error opening file", "failed to read file attributes.", result);
 		return result;
 	}
 
-    outAttrMsg->PrintToStream();    // DEBUG
     return B_OK;
 }
 
 // look up suitable view based on MIME type, fall back to generic form view if not available.
 ShojiView* ShojiWindow::GetViewTemplateForType(const char* mimeType) {
     ShojiView* view = new ShojiTemplateView(mimeType);
+    status_t status = view->Initialize();
 
     BString message;
-    if (view->IsValid()) {
-        message.Append("Open template view for type ");
-    } else {
-        message.Append("Open generic view for type ");
+    if (status == B_ENTRY_NOT_FOUND) {
         delete view;
         view = new ShojiGenericFormView();
+        status = view->Initialize();
     }
-    message.Append(mimeType);
-    ShowUserError("Debug", message.String(), B_OK);
 
+    if (status != B_OK) {
+        BString detail("Failed to set up view.");
+        ShowUserError("Error", detail.String(), status);
+        return NULL;
+    }
+
+    message.Append(mimeType);
     return view;
 }
 

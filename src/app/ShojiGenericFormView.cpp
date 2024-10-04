@@ -22,7 +22,7 @@ ShojiGenericFormView::ShojiGenericFormView() : ShojiView()
     fView = new BGroupView(B_VERTICAL, 0);
 	fView->SetFlags(fView->Flags() | B_NAVIGABLE);
 	fView->SetName("Shoji Dynamic View");
-    fView->GroupLayout()->SetInsets(be_control_look->DefaultLabelSpacing());
+    reinterpret_cast<BGroupView*>(fView)->GroupLayout()->SetInsets(be_control_look->DefaultLabelSpacing());
 
 	// Set view color to standard background grey
 	fView->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
@@ -31,15 +31,6 @@ ShojiGenericFormView::ShojiGenericFormView() : ShojiView()
 
 ShojiGenericFormView::~ShojiGenericFormView()
 {
-}
-
-BView* ShojiGenericFormView::GetView()
-{
-    return fView;
-}
-
-bool ShojiGenericFormView::IsValid() {
-    return fView != NULL;
 }
 
 status_t ShojiGenericFormView::Populate(const BMessage *mimeAttrInfo, const BMessage *props)
@@ -83,7 +74,7 @@ status_t ShojiGenericFormView::Populate(const BMessage *mimeAttrInfo, const BMes
         bool editable = props->FindBool("attr:editable");
         BView* propView = CreateDataView(name, type, editable, data);
 
-        fView->GroupLayout()->AddView(propView);
+        reinterpret_cast<BGroupView*>(fView)->GroupLayout()->AddView(propView);
     }
 
     return B_OK;
@@ -112,7 +103,7 @@ BView* ShojiGenericFormView::CreateDataView(const char* name, type_code typeCode
             dataView = new BCheckBox(name, new BMessage()); /* todo: */
             bool state = reinterpret_cast<const bool*>(data);
             reinterpret_cast<BCheckBox*>(dataView)->SetValue(
-                state ? B_CONTROL_ON : B_CONTROL_OFF);   // wtf? no bool parameter?
+                state ? B_CONTROL_ON : B_CONTROL_OFF);
             break;
         }
         case B_DOUBLE_TYPE: {
