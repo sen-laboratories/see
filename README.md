@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/assets/shoji-logo.jpg" width=320 />
+  <img src="src/assets/see-logo.webp" width=320 />
 </p>
 
 # SEE - SEN Entity Editor
