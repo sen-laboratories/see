@@ -30,6 +30,18 @@ ShojiApp::~ShojiApp()
 {
 }
 
+int main()
+{
+	ShojiApp* app = new ShojiApp();
+    if (app->InitCheck() != B_OK) {
+        return 1;
+    }
+	app->Run();
+
+	delete app;
+	return 0;
+}
+
 void ShojiApp::ArgvReceived(int32 argc, char **argv)
 {
     if (argc < 1) {
@@ -101,16 +113,4 @@ status_t ShojiApp::GenerateTemplates() {
     if (result == B_OK) result = contactViewFlat.Flatten(&outFile);
 
     return result;
-}
-
-int main()
-{
-	ShojiApp* app = new ShojiApp();
-    if (app->InitCheck() != B_OK) {
-        return 1;
-    }
-	app->Run();
-
-	delete app;
-	return 0;
 }

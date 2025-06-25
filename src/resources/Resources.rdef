@@ -13,6 +13,6 @@ resource app_version {
 
 	internal = 0,
 
-	short_info = "Shoji Entity Forms",
-	long_info  = "a flexible template based file viewer"
+	short_info = "Shoji Entity Editor",
+	long_info  = "a flexible template based entity viewer and editor"
 };
