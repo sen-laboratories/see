@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/shoji-logo.webp" width=320 />
+  <img src="images/shoji-logo.webp" width=480 />
 </p>
 
 # Shoji - a template-based Entity Editor
