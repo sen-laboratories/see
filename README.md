@@ -8,12 +8,12 @@
 # About
 
 "Shoji" is the Japanese word for the typical sliding doors with paper fillings and wooden frames.
-The individual kanji in the logo have individual meanings that reflect the essence and features of this project:
+The kanji used in the logo have individual meanings that reflect the essence and features of this project:
 
-型 (kata) - meaning "form," "type," or "template"
-構 (kou) - meaning "structure" or "framework"
-編 (hen) - meaning "edit" or "compile"
-文 (bun/mon) - meaning "document" or "text"
+* 型 (kata) - meaning "form," "type," or "template"
+* 構 (kou) - meaning "structure" or "framework"
+* 編 (hen) - meaning "edit" or "compile"
+* 文 (bun/mon) - meaning "document" or "text"
 
 The shoji metaphor captures both the transparency (you can see your data) and the structural flexibility (dynamic sliding doors to reconfigure views based on Entity types and user needs).
 
